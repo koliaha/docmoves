@@ -1,11 +1,10 @@
 <template>
-    <div class="doc-item category-item">
-        <div class="arrow" :class="{ 'isOpen': isOpen }" v-if="isCategory"><img  src="@/assets/icons/arrow.svg" alt="">
+    <div class="doc-item category-item"  >
+        <div class="arrow" :class="{ 'isOpen': isOpen }" v-if="isCategory"><img src="@/assets/icons/arrow.svg" alt="">
         </div>
         <span class="category-title">{{ data.title }}</span>
         <div class="dot-list" v-if="data.dots">
-            <div class="dot-item" v-for="(item, index) in data.dots" :key="index" :style="{ 'background-color': item }">
-            </div>
+            <DotItem v-for="(item, index) in data.dots" :key="index" :data="item" />
         </div>
         <div class="required" v-if="data.required">Обязательный</div>
         <div class="description" v-if="data.description">
@@ -13,19 +12,29 @@
         </div>
         <div class="item-actions">
             <button class="action-btn edit"><img src="@/assets/icons/pen.svg" alt="pen"></button>
-            <button class="action-btn delete"><img src="@/assets/icons/trash.svg" alt="trash"></button>
+            <button class="action-btn delete" @click="remove"><img src="@/assets/icons/trash.svg" alt="trash"></button>
             <button class="action-btn move"><img src="@/assets/icons/move.svg" alt="arrow"></button>
         </div>
     </div>
 </template>
 <script>
+import DotItem from './DotItem.vue'
 export default {
     props: ["data", "isCategory", "isOpen"],
+    components: { DotItem },
+    methods: {
+        remove(){
+            this.isCategory
+            ? this.$store.commit('REMOVE_CATEGORY', this.data)
+            :  this.$store.commit('REMOVE_ITEM', this.data)
+        }
+    },
 }
 </script>
 <style lang="scss">
 .doc-item {
     border: 2px solid #DFE4EF;
+    background: white;
     width: 100%;
     font-weight: 400;
     font-size: 13px;
@@ -68,13 +77,7 @@ export default {
     align-items: center;
     margin: 0 10px;
 
-    .dot-item {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #FF238D;
-        margin: 0 3px;
-    }
+  
 }
 
 .description {
@@ -97,6 +100,7 @@ export default {
     position: relative;
     margin-right: 14px;
     transition: transform 0.6s ease;
+
     img {
         position: absolute;
         top: 50%;

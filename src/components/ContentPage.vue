@@ -4,8 +4,11 @@
         <div class="category-list" v-for="item in getCategory" :key="item.id">
             <CategoryItem :data="item" />
         </div>
-        <div class="category-list noncategory" v-if="getItem.length > 0">
-            <ItemLine v-for="(item, index) in getItem" :key="index" :data="item" />
+        <div class="category-list noncategory" v-if="getItem.length > 0" @drop="onDrop($event)"
+            @dragover.prevent @dragenter.prevent>
+            <div v-for="(item, index) in getItem" :key="index" :draggable="true" @dragstart="onDragStart($event, item)">
+                <ItemLine :data="item" />
+            </div>
         </div>
     </div>
 </template>
@@ -26,7 +29,18 @@ export default {
         getCategory() {
             return this.$store.getters.getCategoryList
         }
-    }
+    },
+    methods: {
+        onDragStart(event, item) {
+            event.dataTransfer.dropEffect = 'move'
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('itemId', item.id.toString())
+        },
+        onDrop(event, id = 0) {
+            const itemId = event.dataTransfer.getData('itemId')
+            this.$store.commit('SET_CATEGORY', { itemId, id })
+        }
+    },
 }
 </script>
 <style lang="scss">

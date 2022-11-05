@@ -40,13 +40,13 @@ export default new Vuex.Store({
         required: true,
       },
       {
-        id: "i3",
+        id: "i6",
         title: "Трудовой договор",
         belong: 1,
       },
 
       {
-        id: "i5",
+        id: "i7",
         title: "ИНН",
         description: "Для всех",
         belong: 2,
@@ -54,7 +54,7 @@ export default new Vuex.Store({
       },
 
       {
-        id: "i5",
+        id: "i8",
         title: "ИНН",
         description: "Для всех",
         belong: 3,
@@ -114,6 +114,34 @@ export default new Vuex.Store({
         );
       });
     },
+    DRAG_START(state, payload){
+      console.log(state);
+      console.log(payload);
+    }, 
+    SET_CATEGORY(state,data){
+      state.itemFilterList = state.itemFilterList.map((el)=>{
+        if(el.id == data.itemId){
+          el.belong = data.id
+        } 
+        return el
+      })
+    },
+    REMOVE_ITEM(state, payload){
+      state.itemList = state.itemList.filter(el=> el.id != payload.id)
+      state.itemFilterList = state.itemList
+    }, 
+    REMOVE_CATEGORY(state, payload){
+      state.itemList = state.itemList.map((el)=>{
+        if(el.belong == payload.category){
+          console.log(el);
+          el.belong = 0
+        } 
+        return el
+      })
+      state.itemFilterList = state.itemList
+      state.categorylist = state.categorylist.filter(el=> el.id != payload.id)
+      state.categoryFilterlist = state.categorylist
+    }, 
   },
   actions: {
     //Получаем данные с апи
