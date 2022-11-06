@@ -1,6 +1,5 @@
 <template>
     <div class="content-wrapper">
-        getOverDraging: {{getOverDraging}}
         <SearchField class="content-search" />
         <div class="category-drop">
             <transition-group :name="'list'">
@@ -105,7 +104,7 @@ export default {
             this.dragOverCat = item
             this.isCatOver = item.id
             this.$store.commit('SET_DRAG', true)
-            this.$store.commit('SET_OVERDRAG', item.id)
+            // this.$store.commit('SET_OVERDRAG', item.id)
 
         },
         onDragCatEnd() {
