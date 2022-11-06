@@ -1,6 +1,8 @@
 <template>
-    <div class="doc-item category-item"  >
-        <div class="arrow" :class="{ 'isOpen': isOpen }" v-if="isCategory"><img src="@/assets/icons/arrow.svg" alt="">
+    <div class="doc-item category-item" :class="{ isDragging: isDragging}">
+        <!-- && id != 0 -->
+        <div class="arrow" :class="{ 'isOpen': isActive }" v-if="isCategory" @click="openCategory">
+            <img src="@/assets/icons/arrow.svg" alt="arrow">
         </div>
         <span class="category-title">{{ data.title }}</span>
         <div class="dot-list" v-if="data.dots">
@@ -13,22 +15,33 @@
         <div class="item-actions">
             <button class="action-btn edit"><img src="@/assets/icons/pen.svg" alt="pen"></button>
             <button class="action-btn delete" @click="remove"><img src="@/assets/icons/trash.svg" alt="trash"></button>
-            <button class="action-btn move"><img src="@/assets/icons/move.svg" alt="arrow"></button>
+            <button class="action-btn move" :class="{ moving: isDragging }"><img src="@/assets/icons/move.svg"
+                    alt="arrow"></button>
         </div>
     </div>
 </template>
 <script>
 import DotItem from './DotItem.vue'
 export default {
-    props: ["data", "isCategory", "isOpen"],
+    props: ["data", "isCategory", "isDragging",  "id"],
     components: { DotItem },
-    methods: {
-        remove(){
-            this.isCategory
-            ? this.$store.commit('REMOVE_CATEGORY', this.data)
-            :  this.$store.commit('REMOVE_ITEM', this.data)
+    data() {
+        return {
+            isActive: true,
         }
     },
+    methods: {
+        remove() {
+            this.isCategory
+                ? this.$store.commit('REMOVE_CATEGORY', this.data)
+                : this.$store.commit('REMOVE_ITEM', this.data)
+        },
+        openCategory() {
+            this.isActive = !this.isActive
+            this.$emit('isActive', this.isActive)
+        },
+    },
+
 }
 </script>
 <style lang="scss">
@@ -44,7 +57,16 @@ export default {
     display: flex;
     align-items: center;
     margin-top: -2px;
+    cursor: move;
+    transition: 0.4s;
+
+    &.isDragging {
+        opacity: 0.5;
+        // box-shadow: 0px 3px 16px rgba(0, 102, 255, 0.7);
+    }
+
 }
+
 
 .category-title {
     margin-right: 10px;
@@ -69,6 +91,10 @@ export default {
         &:hover {
             opacity: 0.7;
         }
+
+        &.moving img {
+            filter: invert(28%) sepia(98%) saturate(4719%) hue-rotate(212deg) brightness(104%) contrast(105%);
+        }
     }
 }
 
@@ -77,7 +103,7 @@ export default {
     align-items: center;
     margin: 0 10px;
 
-  
+
 }
 
 .description {
